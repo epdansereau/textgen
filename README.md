@@ -16,7 +16,7 @@ python subreddit_text_downloader.py --client_id YourClientId \
 
 The data is downloaded and saved as a list of json, saved with a name like *fetched_r_writingprompts_1283899940_1606950225.json* . The data is then cleaned and separated into train/test/dev sets. Here we only keep posts with the string "[wp]" (case insensitive) in the title, and that have been upvoted at least once. We exclude posts with the strings "write " and "describe " in them, and we skip the first 1000 posts.
 ```
-python reddit_data_cleaning.py --data_source fetched_r_writingprompts_1605230974_1606965648.json \
+python reddit_data_cleaning.py --data_source fetched_r_writingprompts_1283899940_1606950225.json \
     --output_dir lm_data \
     --upvoted \
     --required_in_title [wp] \
