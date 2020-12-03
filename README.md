@@ -2,6 +2,14 @@
 
 This repo contains the code to generate story prompts as showcased on https://myths.ai/prompts .
 
+## Setup
+This project is built on the transformers library from HuggingFace, v.3.4.0 (https://github.com/huggingface/transformers)
+
+The gpt2-xl model is fine-tuned for language modeling, and roberta-large is fine-tuned as a classifer.
+
+Two 24GB gpus with cuda are needed to run the code as is.
+
+
 ## How to use
 
 The data is fetched from reddit.com/r/writing_prompts . To scrape the whole subreddit, we use the free pushshift.io API. Consider donating to them if you use this service a lot.
