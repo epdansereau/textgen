@@ -1,5 +1,3 @@
-from transformers.configuration_gpt2 import GPT2Config
-from transformers.tokenization_gpt2 import GPT2Tokenizer
 from transformers import DataCollatorForLanguageModeling, AutoTokenizer, AutoConfig
 
 import torch
