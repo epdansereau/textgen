@@ -57,7 +57,7 @@ python gpt2xl_lm.py --model_source gpt2-xl \
   --split_offset=-1
 ```
 
-# Classifier for selection:
+### Classifier for selection:
 We then fine-tune a classifier model that learns to differentiate generated prompts from real ones. The prompts that can fool the classifier will then be selected as valid prompts.  
 ```
 python adversarial_dataset.py --train_data lm_data/train.txt \
