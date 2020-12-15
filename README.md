@@ -1,6 +1,6 @@
 # Prompts demo
 
-This repo contains the code to generate story prompts as showcased on https://myths.ai/prompts .
+This repo contains code to generate story prompts as showcased on https://myths.ai/prompts .
 
 ## Installation
 This project is built on the transformers library from HuggingFace, v.3.5.1 (https://github.com/huggingface/transformers)
@@ -20,7 +20,7 @@ pip install -r requirements.txt -f https://download.pytorch.org/whl/torch_stable
 ## Usage
 
 ### Fetching the data:
-The data is fetched from reddit.com/r/writing_prompts . To scrape the whole subreddit, we use the free pushshift.io API. Consider donating to them if you use this service a lot.
+Prompts examples are fetched from reddit.com/r/writing_prompts . To scrape the whole subreddit, we use the free pushshift.io API. Consider donating to them if you use this service a lot.
 
 Reddit API keys need to be provided for the download script. These are easy to obtain, instructions here : https://praw.readthedocs.io/en/latest/getting_started/authentication.html)
 ```
@@ -29,9 +29,9 @@ python subreddit_text_downloader.py --client_id YourClientId \
   --user_agent YourUserAgent \
   --subreddit writingprompts
 ```
-The data is downloaded and saved as a list of json, saved with a name like *fetched_r_writingprompts_1283899940_1606950225.json* .
+The data is downloaded and saved as a list of json, with a name similar to *fetched_r_writingprompts_1283899940_1606950225.json* .
 
-The data is then cleaned and separated into train/test/dev sets. Here we only keep posts with the string "[wp]" (case insensitive) in the title, and that have been upvoted at least once. We exclude posts with the strings "write " and "describe " in them, and we skip the first 1000 posts.
+Another script is used to clean the data and save it into train/test/dev sets. Here we only keep posts with the string "[wp]" (case insensitive) in the title, and that have been upvoted at least once. We exclude posts with the strings "write " and "describe " in them, and we skip the first 1000 posts.
 ```
 python reddit_data_cleaning.py --data_source fetched_r_writingprompts_1283899940_1606950225.json \
     --output_dir lm_data \
@@ -42,7 +42,7 @@ python reddit_data_cleaning.py --data_source fetched_r_writingprompts_1283899940
 ```
 
 ### Language modeling:
-Gpt2-xl for language modeling is finetuned on the dataset. The model is splitted between 2 24GB gpus:
+Gpt2-xl for language modeling is finetuned on the dataset. Because the chosen model is too large to be trained on a single Titan gpu, it needs to be splitted between two.
 ```
 python gpt2xl_lm.py --model_source gpt2-xl \
   --batch_size=6 \
@@ -59,6 +59,8 @@ python gpt2xl_lm.py --model_source gpt2-xl \
 
 ### Classifier for selection:
 We then fine-tune a classifier model that learns to differentiate generated prompts from real ones. The prompts that can fool the classifier will then be selected as valid prompts.  
+
+Creating the dataset:
 ```
 python adversarial_dataset.py --train_data lm_data/train.txt \
   --test_data lm_data/test.txt \
@@ -66,7 +68,7 @@ python adversarial_dataset.py --train_data lm_data/train.txt \
   --output_dir class_data \
   --model lm_model/1606969116_ep4_perplexity19.491223080778077
 ```
-The classifier can be trained using the example run_glue.py script provided by hugging face:
+The classifier can be trained using the run_glue.py script provided by Hugging Face:
 ```
 python run_glue.py \
   --model_name_or_path roberta-large-openai-detector \
@@ -84,9 +86,9 @@ python run_glue.py \
 ```
 
 ### Text generation:
-Prompts can then be generated using both models, a generator and a classifier that chooses hopefully the best ones. If an --output_dir is provided, the results will be saved in a file, otherwise they will be printed. 
+Prompts are generated with the language modeling model and the best ones (hopefully) are selected by the classifier. If --output_dir is provided, the results will be saved in a file, otherwise they will be printed. The treshold can be adjusted to balance quality and speed.
 ```
-python textgen.py --lm_model_path lm_model/1606969116_ep0_perplexity44.77411841639417 \
+python textgen.py --lm_model_path lm_model/1605887264_ep4_perplexity19.4912230807780777 \
   --class_model_path class_model \
   --amount=8 \
   --treshold=2.7  
