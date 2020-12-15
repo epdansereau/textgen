@@ -9,7 +9,7 @@ GPT2-xl is fine-tuned for language modeling, and roberta-large is fine-tuned as 
 
 This code was made to run on two GPUs with 24GB of ram each, and would have to be modified to run on other systems.
 
-To install, run in a virtual environement:
+To install, run in a virtual environment:
 ```
 git clone https://github.com/epdansereau/textgen_prompts_demo.git
 cd textgen_prompts_demo
